@@ -1,0 +1,14 @@
+packages:
+  - .
+
+engineStrict: true
+saveExact: true
+
+# Permit only the build scripts needed by the agreed toolchain.
+allowBuilds:
+  "@prisma/engines": true
+  prisma: true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  "@prisma/client": false
