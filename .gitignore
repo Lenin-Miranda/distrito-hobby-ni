@@ -1,13 +1,14 @@
 # Dependencies and package-manager state
-/node_modules/
-/.pnpm-store/
+node_modules/
+.pnpm-store/
 
 # Next.js and generated output
-/.next/
-/out/
-/build/
-/dist/
-/next-env.d.ts
+.next/
+out/
+build/
+dist/
+.turbo/
+next-env.d.ts
 *.tsbuildinfo
 
 # Local environment files; only the blank template is versioned
@@ -19,10 +20,10 @@
 *.pfx
 
 # Test output
-/coverage/
-/playwright-report/
-/test-results/
-/blob-report/
+coverage/
+playwright-report/
+test-results/
+blob-report/
 
 # Local tooling and editor files
 .DS_Store

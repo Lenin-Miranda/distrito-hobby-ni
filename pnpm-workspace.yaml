@@ -1,5 +1,6 @@
 packages:
-  - .
+  - apps/*
+  - packages/*
 
 engineStrict: true
 saveExact: true
@@ -12,3 +13,9 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   "@prisma/client": false
+  "@swc/core": true
+minimumReleaseAgeExclude:
+  - "@nestjs/common@12.1.0"
+  - "@nestjs/core@12.1.0"
+  - "@nestjs/platform-express@12.1.0"
+  - "@nestjs/testing@12.1.0"

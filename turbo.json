@@ -1,0 +1,35 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "globalDependencies": [".env*", ".prettierrc.json"],
+  "globalEnv": ["CI", "NODE_ENV"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
+    },
+    "@distrito/web#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["NEXT_PUBLIC_API_BASE_URL", "API_INTERNAL_BASE_URL"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+      "interruptible": true,
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": [
+        "PORT",
+        "WEB_ORIGINS",
+        "NEXT_PUBLIC_API_BASE_URL",
+        "API_INTERNAL_BASE_URL"
+      ]
+    },
+    "lint": { "dependsOn": ["^build"] },
+    "typecheck": { "dependsOn": ["^build"], "cache": false },
+    "test": { "dependsOn": ["^build"], "outputs": [] },
+    "test:e2e": { "cache": false }
+  }
+}

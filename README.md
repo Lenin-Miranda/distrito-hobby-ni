@@ -1,172 +1,111 @@
 # Distrito Hobby NI
 
-Repository foundation for a small business in Nicaragua that will sell comics, manga, figures, collectibles, cards, and related merchandise. The repository uses the existing workspace name, `distrito-hobby-ni`.
+Base de desarrollo para una futura tienda de Nicaragua. El mismo repositorio conserva su historial y su página temporal, ahora en un monorepo **pnpm + Turborepo**, con **Next.js** y una API **NestJS** desplegables por separado.
 
-## Current status
+**Estado:** fase de arquitectura e infraestructura. Todavía no es una tienda en producción. No hay catálogo, persistencia, autenticación, pagos, checkout ni administración implementados.
 
-This project is currently in the foundation/architecture phase. E-commerce domain architecture, database models, authentication flows, payments, inventory, checkout, and admin functionality will be designed before implementation.
+## Inicio rápido
 
-The application currently serves only a responsive, accessible coming-soon page. Its neutral styling and system font are temporary, not a final brand identity. Search indexing is disabled in page metadata until launch is planned.
-
-## Technology stack
-
-| Area                        | Foundation                                                                      |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| Runtime and package manager | Node.js 24, pnpm 12.6.0                                                         |
-| Application                 | Next.js 16, App Router, React 19, TypeScript strict mode                        |
-| UI tooling                  | Tailwind CSS 4, shadcn/ui configuration and utilities, Lucide React, Motion     |
-| Validation, forms, state    | Zod, React Hook Form, Zustand                                                   |
-| Persistence                 | Prisma ORM and client **7.10.0**, with PostgreSQL as the agreed future database |
-| Authentication              | Better Auth installed; integration deferred                                     |
-| Testing                     | Vitest, React Testing Library, Playwright                                       |
-| Code quality                | ESLint, Prettier, EditorConfig                                                  |
-
-Exact dependency versions are recorded in `package.json` and `pnpm-lock.yaml`. Prisma and its client are pinned to version 7; do not upgrade them to Prisma 8. Installed feature libraries are intentionally unused until the relevant architecture is approved.
-
-PostgreSQL is not provisioned or required to run this foundation. There is no Prisma schema, migration, generated client, database connection, or authentication endpoint. Database version, hosting, driver setup, and model design belong to the architecture phase.
-
-## Prerequisites
-
-- Git and access to the private repository.
-- Node.js **24.11.0 or later within major 24**. `.nvmrc` and `.node-version` select Node 24; other majors are outside the declared project runtime.
-- pnpm **12.6.0**, as declared in `packageManager`.
-
-If using nvm:
+Requisitos: Git, **Node >=24.11.0 <25** y **pnpm 12.6.0**. Se conservan `.nvmrc`, `.node-version`, `engineStrict` y el lockfile único.
 
 ```sh
 nvm install
 nvm use
-node --version
-```
-
-Install the declared package manager if needed:
-
-```sh
 npm install --global pnpm@12.6.0
-pnpm --version
-```
-
-## Installation
-
-```sh
-git clone https://github.com/Lenin-Miranda/distrito-hobby-ni.git
-cd distrito-hobby-ni
 pnpm install --frozen-lockfile
+cp apps/web/.env.example apps/web/.env.local
+cp apps/api/.env.example apps/api/.env.local
+pnpm dev
 ```
 
-The committed lockfile is required. Use pnpm for dependency changes and commit the resulting lockfile. Package-manager settings, including exact version saving and the dependency build-script allowlist, live in `pnpm-workspace.yaml`; this is a single application, not a monorepo.
+Los ejemplos contienen únicamente URLs locales y placeholders vacíos. Los valores locales predeterminados permiten arrancar sin copiarlos. No hacen falta PostgreSQL ni credenciales.
 
-## Environment setup
+- Web: <http://localhost:3000>
+- Diagnóstico técnico: <http://localhost:3000/system-status>
+- Liveness API: <http://localhost:4000/api/v1/health>
 
-No environment values are needed for the temporary page, tests, or production build. When preparing a local environment file:
+## Comandos desde la raíz
+
+| Comando             | Resultado                                                             |
+| ------------------- | --------------------------------------------------------------------- |
+| `pnpm dev`          | Compila contratos y levanta web + API; observa cambios compartidos    |
+| `pnpm dev:web`      | Contratos y servidor de desarrollo Next                               |
+| `pnpm dev:api`      | Contratos y servidor de desarrollo Nest                               |
+| `pnpm build`        | Compila contratos y ambas aplicaciones                                |
+| `pnpm build:web`    | Compila dependencias compartidas y web                                |
+| `pnpm build:api`    | Compila dependencias compartidas y API                                |
+| `pnpm lint`         | Comprueba límites entre paquetes y lint por aplicación                |
+| `pnpm typecheck`    | Tipos estrictos en los paquetes y tipos de rutas Next                 |
+| `pnpm test`         | Vitest: contratos, React Testing Library, API con DI real y Supertest |
+| `pnpm test:e2e`     | Build coordinado y Playwright contra procesos compilados reales       |
+| `pnpm format`       | Prettier global                                                       |
+| `pnpm format:check` | Comprueba formato global                                              |
+
+Arranques de producción independientes, después de sus builds:
 
 ```sh
-cp .env.example .env.local
+# Terminal web; variables del frontend ya configuradas
+pnpm --filter @distrito/web start
+
+# Terminal API; ejemplo local de entorno de producción
+NODE_ENV=production PORT=4000 WEB_ORIGINS=http://localhost:3000 pnpm --filter @distrito/api start
 ```
 
-Leave the placeholders blank during this phase:
+La API sirve `dist/main.js` con Node; no usa Nest CLI, Vite ni TypeScript en producción. Para servir el JavaScript sin pnpm: `cd apps/api && node dist/main.js`.
 
-| Placeholder        | Reserved purpose                               |
-| ------------------ | ---------------------------------------------- |
-| `DATABASE_URL`     | Future PostgreSQL connection                   |
-| `AUTH_SECRET`      | Future authentication secret                   |
-| `CLOUDINARY_URL`   | Future media integration                       |
-| `EMAIL_API_KEY`    | Future email service                           |
-| `PAYMENT_PROVIDER` | Future provider selection; no provider assumed |
+## Estructura
 
-These names are planning placeholders, not an implemented environment contract. For example, mapping `AUTH_SECRET` to Better Auth configuration will be decided when authentication is implemented. Do not generate or add real credentials now. `.env*` files are ignored except for the blank `.env.example`. Never put secrets in client code or `NEXT_PUBLIC_*` variables.
-
-## Development commands
-
-| Command             | Purpose                                                          |
-| ------------------- | ---------------------------------------------------------------- |
-| `pnpm dev`          | Start development at `http://localhost:3000`                     |
-| `pnpm build`        | Create a production build                                        |
-| `pnpm start`        | Serve an existing production build                               |
-| `pnpm lint`         | Run ESLint; warnings fail the check                              |
-| `pnpm typecheck`    | Generate Next.js route types and run strict TypeScript checks    |
-| `pnpm test`         | Run unit/component tests once                                    |
-| `pnpm test:watch`   | Watch unit/component tests                                       |
-| `pnpm test:e2e`     | Build and test the production app in desktop and mobile Chromium |
-| `pnpm format`       | Format source and documentation                                  |
-| `pnpm format:check` | Check formatting without editing files                           |
-
-Next.js does not run ESLint as part of the production build; run the quality commands separately.
-
-ESLint is pinned to 9.39.5 because the lint plugins shipped with this Next.js version declare support through ESLint 9. npm marks that major deprecated; move to ESLint 10 when the Next.js plugin set supports it. The current dependency graph has no peer conflicts.
-
-## Testing and verification
-
-Install the Playwright browser once per development machine:
-
-```sh
-pnpm exec playwright install chromium
+```text
+apps/
+  web/                 Next existente: src, tests, App Router, Tailwind/shadcn
+  api/                 Nest estándar: src, test, config, modules/health
+packages/
+  contracts/           Esquema Zod HTTP y tipo inferido; dist ESM + .d.ts
+  typescript-config/   Base estricta y configuración NodeNext
+scripts/
+  check-boundaries.mjs Comprobación automatizada de imports y dependencias
+  e2e.mjs              Build único previo a Playwright
+.github/workflows/ci.yml
+pnpm-workspace.yaml    Workspaces y política de scripts de instalación
+turbo.json            Grafo de tareas, caché e inputs de entorno
+docs/
+  architecture.md      Responsabilidades, decisiones y alcance futuro
+  development.md       Entornos, flujo local, pruebas y convenciones
+  deployment.md        Despliegues independientes; no ejecutados
 ```
 
-On Linux CI, use `pnpm exec playwright install --with-deps chromium` to include required system libraries.
+Cada app conserva su `package.json`, configuración de compilación, lint, pruebas y `.env.example`. No hay repositorios Git anidados ni lockfiles por aplicación.
 
-Before committing:
+## Stack y dependencias
+
+Se conservan **Next 16.3.6, React 19.3.0, Prisma/client 7.10.0, Better Auth 1.7.5, TypeScript 5.9.3, pnpm 12.6.0** y las versiones del frontend existente: Tailwind, shadcn, Zod, React Hook Form, Zustand, Lucide y Motion.
+
+Se añaden **NestJS 12.1.0**, Nest CLI 12.0.5 y Config 12.0.1 para el backend; **Turbo 2.11.3** para el grafo del monorepo; Helmet 8.3.0, reflect-metadata 0.2.2 y RxJS 7.8.2 para el arranque; Nest Testing, Supertest 7.3.0, SWC 1.16.2 y unplugin-swc 2.0.0 para probar decoradores e inyección real. `server-only` protege la configuración interna de web. Las versiones exactas están en los manifests y lockfile.
+
+ESLint 9.39.5 permanece por compatibilidad con los plugins de Next; su aviso de deprecación es previo al refactor. No se fuerza ESLint 10. API usa reglas TypeScript propias, sin reglas de Next. shadcn CLI queda en devDependencies de web, disponible durante su build porque también aporta una hoja CSS.
+
+Prisma y Better Auth pertenecen exclusivamente a API. No se genera un cliente Prisma ni se inicializa autenticación. PostgreSQL sigue siendo el destino previsto, sin provisión ni conexión.
+
+## Calidad
 
 ```sh
+pnpm --filter @distrito/web exec playwright install chromium
 pnpm format:check
-pnpm typecheck
 pnpm lint
+pnpm typecheck
 pnpm test
+pnpm build
 pnpm test:e2e
 ```
 
-`test:e2e` runs a production build, starts a dedicated production server on `127.0.0.1:3100`, and stops it when tests finish. It invokes Next.js directly so Playwright owns and cleans up the server process. Keep that port available. Do not run builds and E2E tests concurrently because they share `.next`. To verify compilation on its own, run `pnpm build`.
+Ejecuta los checks secuencialmente: `typegen`, build y E2E no deben escribir `.next` en paralelo. E2E construye los artefactos una vez antes de iniciar servidores; en CI ese paso cubre también el build de producción.
 
-The component smoke test verifies the page's accessible landmark and heading. E2E checks cover successful HTTP rendering, metadata, content visibility, horizontal overflow at desktop and mobile sizes, and browser errors. These tests verify the foundation; they do not validate any future commerce behavior. Test reports and traces are ignored by Git.
+La suite conserva desktop y móvil de 360 px; comprueba `/system-status` con Nest real, CORS en navegador y una segunda instancia web apuntando a un puerto sin API. La página temporal continúa funcionando en ese caso. Playwright cierra todos los procesos que inicia. No se cachean servidores ni E2E.
 
-## Repository structure
+## Desarrollo y alcance
 
-```text
-src/
-  app/                 App Router layout, temporary page, styles, component test
-  components/ui/       Reserved for shadcn/ui components when needed
-  config/              Reserved for shared configuration
-  lib/utils.ts         shadcn-compatible class-name utility
-  types/               Reserved for genuinely shared types
-tests/
-  e2e/home.spec.ts      Desktop and mobile browser smoke test
-  setup.ts             React Testing Library / Vitest setup
-components.json        shadcn/ui aliases and neutral theme configuration
-eslint.config.mjs      Next.js and TypeScript lint rules
-next.config.ts         Minimal Next.js configuration
-playwright.config.ts   Production-server browser test configuration
-vitest.config.ts       Component/unit test configuration
-.env.example           Blank integration placeholders
-```
+Usa ramas y pull requests, commits convencionales y `workspace:*` para paquetes internos. No importes código de una app desde otra. Los contratos públicos no son modelos Prisma. Conserva secretos fuera de Git; `private: true` solo impide publicar los paquetes en npm.
 
-Empty shared directories are intentionally retained with `.gitkeep` files. Add code when a concrete requirement needs it; avoid speculative service layers, repositories, state stores, or domain modules.
+En la inspección de este refactor GitHub reportó el repositorio **público**, aunque la intención inicial era privado. La migración no cambia la visibilidad; cualquier cambio requiere confirmación específica.
 
-shadcn/ui is configured for source components added on demand. After the UI is designed, use `pnpm exec shadcn add <component>` and review generated code and dependency changes. No component collection or final theme has been introduced.
-
-## Development conventions
-
-- Use short-lived branches and reviewed pull requests into `main` after this initial foundation commit.
-- Write conventional commits, such as `chore: initialize project foundation` or `fix: correct page metadata`.
-- Keep TypeScript strict. Prefer `@/*` imports for shared source code.
-- Use Server Components by default; add client boundaries only when interaction requires them.
-- Preserve semantic HTML and verify responsive behavior for UI changes.
-- Keep tests proportional to behavior. Add meaningful coverage alongside future features.
-- Run formatting, types, lint, unit tests, and production browser tests before merging.
-- Keep Prisma and `@prisma/client` on the same exact **7.x** version.
-- Review dependency upgrades and dependency lifecycle scripts explicitly; do not broadly allow all install scripts.
-- Keep credentials, local environment files, generated output, and customer data out of version control.
-
-## Intentionally deferred
-
-The next phase will design domain architecture, database schema, authentication, payment boundaries, and UI/UX before implementing them. There are no products, categories, inventory, cart, checkout, orders, customer flows, admin tools, discounts, wishlists, reviews, webhooks, or email sending in this repository.
-
-Cloudinary, email, and payment services are not configured. Stripe is not installed. The payment layer will be designed around a provider abstraction suitable for Nicaragua, with BAC Credomatic E-Commerce as one possible provider; no provider has been selected or implemented.
-
-Deployment, production secrets, data handling, and operational policies remain for a later phase. This foundation is not a live store.
-
-## Setup references
-
-- [Next.js installation](https://nextjs.org/docs/app/getting-started/installation)
-- [shadcn/ui manual setup](https://ui.shadcn.com/docs/installation/manual)
-- [pnpm project settings](https://pnpm.io/settings)
-- [Prisma ORM 7 documentation](https://www.prisma.io/docs/orm/v7)
+Consulta [arquitectura](docs/architecture.md), [desarrollo](docs/development.md) y [despliegue](docs/deployment.md). Persistencia, autenticación/cookies/CSRF, pagos, proveedores, diseño final y funcionalidad comercial quedan pendientes. La identidad futura aprobada es azul marino, dorado y crema; la página temporal no cambia de paleta.
