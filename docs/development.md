@@ -16,7 +16,7 @@ Copia `apps/web/.env.example` a `.env.local` en ese directorio, y lo mismo para 
 
 Los defaults locales son `http://localhost:4000/api/v1` y origen `http://localhost:3000`. Configura URLs explícitas en despliegues. Cambiar una variable pública requiere reconstruir web; cambiar la interna afecta al runtime del servidor. Nunca pongas credenciales en `NEXT_PUBLIC_*` ni `next.config.env`.
 
-Los placeholders DATABASE_URL, BETTER_AUTH_SECRET, CLOUDINARY_URL, RESEND_API_KEY y PAYMENT_PROVIDER están reservados, vacíos y sin uso. No son obligatorios para arrancar ni probar. No se envían a Turbo indiscriminadamente: cada tarea declara solo las variables que necesita.
+DATABASE_ENABLED=false permite arrancar sin DB; DATABASE_URL se requiere cuando es true. DIRECT_URL y SHADOW_DATABASE_URL son exclusivos de herramientas Prisma. Consulta [desarrollo con Supabase](local-development.md) para el entorno generado y roles. Los placeholders BETTER_AUTH_SECRET, CLOUDINARY_URL, RESEND_API_KEY y PAYMENT_PROVIDER están reservados, vacíos y sin uso. No son obligatorios para arrancar ni probar. No se envían a Turbo indiscriminadamente: cada tarea declara solo las variables que necesita.
 
 ## Flujo local
 
@@ -66,6 +66,6 @@ CI usa los mismos checks, con `playwright install --with-deps chromium`. El paso
 
 Turbo cachea contratos/API en `dist` y web en `.next`, excluyendo `.next/cache`. Los inputs mantienen `$TURBO_DEFAULT$` y añaden `.env*`; las URLs relevantes participan en la clave del build web. `typecheck` no se cachea porque Next genera tipos de rutas; E2E y servidores tampoco. No hay caché remota configurada.
 
-Las únicas excepciones nuevas de lifecycle son SWC, que comprueba su binding nativo, y la revisión específica de las versiones estables de Nest declaradas en `minimumReleaseAgeExclude`; no se permite ejecutar cualquier script globalmente. Prisma client sigue con postinstall bloqueado porque no existe un esquema.
+Las únicas excepciones nuevas de lifecycle son SWC, que comprueba su binding nativo, y la revisión específica de las versiones estables de Nest declaradas en `minimumReleaseAgeExclude`; no se permite ejecutar cualquier script globalmente. Prisma client sigue con postinstall bloqueado: Turbo ejecuta generación explícita desde el esquema vacío. Supabase 2.117.0 se distribuye con binarios opcionales por plataforma y no requiere autorizar otro postinstall.
 
 Los cambios a componentes shadcn se hacen desde apps/web: `pnpm exec shadcn add <component>`, tras aprobar diseño. Conserva la página temporal, usa TypeScript estricto, tests proporcionales y commits convencionales. No añadas paquetes shared/UI/database/auth sin responsabilidad y consumidor concretos.

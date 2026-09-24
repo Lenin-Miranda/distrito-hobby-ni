@@ -1,0 +1,81 @@
+# Alternate mode. Stop production Compose before switching; data is retained.
+services:
+  api:
+    build:
+      target: development
+    read_only: false
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./apps/api/src:/workspace/apps/api/src
+      - ./apps/api/prisma:/workspace/apps/api/prisma:ro
+      - ./packages/contracts/src:/workspace/packages/contracts/src:ro
+      - api-node-modules:/workspace/node_modules:ro
+      - api-app-modules:/workspace/apps/api/node_modules:ro
+      - api-contract-modules:/workspace/packages/contracts/node_modules:ro
+      - api-contract-dist:/workspace/packages/contracts/dist
+      - api-generated:/workspace/apps/api/src/generated
+      - api-dist:/workspace/apps/api/dist
+      - api-turbo:/workspace/.turbo
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:4000/api/v1/ready',{signal:AbortSignal.timeout(4000)}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  web:
+    build:
+      target: development
+    read_only: false
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:4000/api/v1}
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./apps/web/src:/workspace/apps/web/src:ro
+      - ./packages/contracts/src:/workspace/packages/contracts/src:ro
+      - web-node-modules:/workspace/node_modules:ro
+      - web-app-modules:/workspace/apps/web/node_modules:ro
+      - web-contract-modules:/workspace/packages/contracts/node_modules:ro
+      - web-contract-dist:/workspace/packages/contracts/dist
+      - web-next:/workspace/apps/web/.next
+      - web-turbo:/workspace/.turbo
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:3000',{signal:AbortSignal.timeout(4000)}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+volumes:
+  api-contract-dist:
+  api-generated:
+  api-dist:
+  api-turbo:
+  web-contract-dist:
+  web-next:
+  web-turbo:
+  api-node-modules:
+    name: ${LOCAL_PROJECT}_api-node-modules-${LOCAL_DEPS_REV:?Use pnpm docker:dev}
+  api-app-modules:
+    name: ${LOCAL_PROJECT}_api-app-modules-${LOCAL_DEPS_REV:?Use pnpm docker:dev}
+  api-contract-modules:
+    name: ${LOCAL_PROJECT}_api-contract-modules-${LOCAL_DEPS_REV:?Use pnpm docker:dev}
+  web-node-modules:
+    name: ${LOCAL_PROJECT}_web-node-modules-${LOCAL_DEPS_REV:?Use pnpm docker:dev}
+  web-app-modules:
+    name: ${LOCAL_PROJECT}_web-app-modules-${LOCAL_DEPS_REV:?Use pnpm docker:dev}
+  web-contract-modules:
+    name: ${LOCAL_PROJECT}_web-contract-modules-${LOCAL_DEPS_REV:?Use pnpm docker:dev}

@@ -20,10 +20,29 @@
     "test": "turbo run test",
     "test:e2e": "node scripts/e2e.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "local:setup": "node scripts/local/cli.mjs setup",
+    "dev:local": "node scripts/local/cli.mjs dev",
+    "supabase:start": "node scripts/local/cli.mjs start",
+    "supabase:stop": "node scripts/local/cli.mjs stop",
+    "supabase:status": "node scripts/local/cli.mjs status",
+    "docker:build": "node scripts/local/cli.mjs build",
+    "docker:up": "node scripts/local/cli.mjs up",
+    "docker:down": "node scripts/local/cli.mjs down",
+    "docker:logs": "node scripts/local/cli.mjs logs",
+    "docker:dev": "node scripts/local/cli.mjs docker-dev",
+    "db:migrate:dev": "node scripts/local/cli.mjs migrate-dev",
+    "db:migrate:deploy": "node scripts/local/cli.mjs migrate-deploy",
+    "db:check": "node scripts/local/cli.mjs check",
+    "test:integration:db": "node scripts/local/cli.mjs integration",
+    "docker:smoke": "node scripts/local/cli.mjs smoke",
+    "db:generate": "turbo run db:generate",
+    "docker:smoke:dev": "node scripts/local/cli.mjs smoke-dev",
+    "test:local": "node --test scripts/local/*.test.mjs"
   },
   "devDependencies": {
     "prettier": "3.9.8",
+    "supabase": "2.117.0",
     "turbo": "2.11.3",
     "typescript": "5.9.3"
   }

@@ -96,3 +96,16 @@ test("returns consistent public errors with no stack or private exception messag
     .expect(404)
     .expect({ statusCode: 404, message: "Not found" });
 });
+
+test("disabled database is unavailable while liveness remains healthy", async () => {
+  const log = vi
+    .spyOn(Logger.prototype, "error")
+    .mockImplementation(() => undefined);
+  const response = await request(server).get("/api/v1/ready").expect(503);
+  expect(response.body).toEqual({
+    statusCode: 503,
+    message: "Service unavailable",
+  });
+  await request(server).get("/api/v1/health").expect(200);
+  log.mockRestore();
+});

@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+import { spawn } from "node:child_process";
+import { bindLoopback } from "../docker-bind.mjs";
+try {
+  const args = bindLoopback(
+    process.argv.slice(2),
+    process.env.DISTRITO_DOCKER_NETWORK,
+    process.env.DISTRITO_DOCKER_PROJECT,
+  );
+  const binary = process.env.DISTRITO_DOCKER_BINARY;
+  if (!binary || binary === process.argv[1])
+    throw new Error("Missing real Docker binary.");
+  const child = spawn(binary, args, { stdio: "inherit" });
+  process.on("SIGINT", () => child.kill("SIGINT"));
+  process.on("SIGTERM", () => child.kill("SIGTERM"));
+  child.on("error", () => {
+    process.exitCode = 1;
+  });
+  child.on("exit", (code) => {
+    process.exitCode = code ?? 1;
+  });
+} catch {
+  console.error("Local Docker binding guard rejected the operation.");
+  process.exitCode = 1;
+}

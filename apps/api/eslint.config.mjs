@@ -3,7 +3,15 @@ import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier/flat";
 
 export default tseslint.config(
-  { ignores: ["dist/**", "coverage/**", "node_modules/**", ".turbo/**"] },
+  {
+    ignores: [
+      "dist/**",
+      "src/generated/**",
+      "coverage/**",
+      "node_modules/**",
+      ".turbo/**",
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {

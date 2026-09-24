@@ -14,3 +14,7 @@ next-env.d.ts
 .env*
 !.env.example
 .vscode/
+
+!.env.docker.example
+.local/
+apps/api/src/generated/

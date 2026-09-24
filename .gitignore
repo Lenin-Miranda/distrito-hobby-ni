@@ -32,3 +32,7 @@ blob-report/
 /.vscode/
 /.idea/
 *.swp
+
+!.env.docker.example
+.local/
+apps/api/src/generated/

@@ -4,6 +4,7 @@ import { validateEnvironment } from "../src/config/environment.js";
 test("starts locally without database credentials", () => {
   expect(validateEnvironment({})).toEqual({
     NODE_ENV: "development",
+    DATABASE_ENABLED: false,
     PORT: 4000,
     WEB_ORIGINS: ["http://localhost:3000"],
   });
@@ -39,4 +40,28 @@ test("does not include invalid values in configuration errors", () => {
   expect(() => validateEnvironment({ PORT: "private-value" })).toThrow(
     "Invalid API configuration: PORT",
   );
+});
+
+test("parses false explicitly and requires PostgreSQL credentials only when enabled", () => {
+  expect(
+    validateEnvironment({ DATABASE_ENABLED: "false" }).DATABASE_ENABLED,
+  ).toBe(false);
+  expect(() => validateEnvironment({ DATABASE_ENABLED: "yes" })).toThrow(
+    "DATABASE_ENABLED",
+  );
+  expect(() => validateEnvironment({ DATABASE_ENABLED: "true" })).toThrow(
+    "DATABASE_URL",
+  );
+  expect(() =>
+    validateEnvironment({
+      DATABASE_ENABLED: "true",
+      DATABASE_URL: "https://private.example",
+    }),
+  ).toThrow("DATABASE_URL");
+  expect(
+    validateEnvironment({
+      DATABASE_ENABLED: "true",
+      DATABASE_URL: "postgresql://runtime:secret@127.0.0.1:54322/postgres",
+    }).DATABASE_ENABLED,
+  ).toBe(true);
 });

@@ -2,7 +2,7 @@
 
 Base de desarrollo para una futura tienda de Nicaragua. El mismo repositorio conserva su historial y su página temporal, ahora en un monorepo **pnpm + Turborepo**, con **Next.js** y una API **NestJS** desplegables por separado.
 
-**Estado:** fase de arquitectura e infraestructura. Todavía no es una tienda en producción. No hay catálogo, persistencia, autenticación, pagos, checkout ni administración implementados.
+**Estado:** fase de arquitectura e infraestructura. Todavía no es una tienda en producción. Hay infraestructura PostgreSQL local y readiness real; todavía no hay catálogo, modelos comerciales, autenticación, pagos, checkout ni administración.
 
 ## Inicio rápido
 
@@ -23,6 +23,25 @@ Los ejemplos contienen únicamente URLs locales y placeholders vacíos. Los valo
 - Web: <http://localhost:3000>
 - Diagnóstico técnico: <http://localhost:3000/system-status>
 - Liveness API: <http://localhost:4000/api/v1/health>
+
+## Supabase y Docker local
+
+Desde un clone instalado, sin copiar `.env`:
+
+```sh
+pnpm local:setup
+pnpm dev:local       # Next/Nest host + Supabase Docker
+# Alternativa: detener las apps host primero
+pnpm docker:up      # Next/Nest Compose + la misma DB
+pnpm docker:down    # conserva DB y volúmenes
+pnpm supabase:stop  # conserva datos
+```
+
+Consulta [desarrollo local](docs/local-development.md) y [Docker](docs/docker.md)
+para puertos, roles, codegen, migraciones, modo contenedorizado con recarga y
+pruebas aisladas. `pnpm dev` conserva el modo sin DB. Si otros proyectos ocupan
+54321–54323, los comandos abortan sin detenerlos; `LOCAL_PROFILE=test` selecciona
+explícitamente otra instancia/puertos.
 
 ## Comandos desde la raíz
 
@@ -84,7 +103,7 @@ Se añaden **NestJS 12.1.0**, Nest CLI 12.0.5 y Config 12.0.1 para el backend; *
 
 ESLint 9.39.5 permanece por compatibilidad con los plugins de Next; su aviso de deprecación es previo al refactor. No se fuerza ESLint 10. API usa reglas TypeScript propias, sin reglas de Next. shadcn CLI queda en devDependencies de web, disponible durante su build porque también aporta una hoja CSS.
 
-Prisma y Better Auth pertenecen exclusivamente a API. No se genera un cliente Prisma ni se inicializa autenticación. PostgreSQL sigue siendo el destino previsto, sin provisión ni conexión.
+Prisma pertenece exclusivamente a API: cliente sin modelos, adapter-pg 7.10.0 y PostgreSQL mediante Supabase CLI 2.117.0. Se añaden pg 8.23.0 y @types/pg 8.23.1. Better Auth permanece sin inicializar. Docker usa Node 24.21.0 Debian slim.
 
 ## Calidad
 
@@ -108,4 +127,4 @@ Usa ramas y pull requests, commits convencionales y `workspace:*` para paquetes 
 
 En la inspección de este refactor GitHub reportó el repositorio **público**, aunque la intención inicial era privado. La migración no cambia la visibilidad; cualquier cambio requiere confirmación específica.
 
-Consulta [arquitectura](docs/architecture.md), [desarrollo](docs/development.md) y [despliegue](docs/deployment.md). Persistencia, autenticación/cookies/CSRF, pagos, proveedores, diseño final y funcionalidad comercial quedan pendientes. La identidad futura aprobada es azul marino, dorado y crema; la página temporal no cambia de paleta.
+Consulta [arquitectura](docs/architecture.md), [desarrollo](docs/development.md) y [despliegue](docs/deployment.md). Modelos comerciales, autenticación/cookies/CSRF, pagos, proveedores y diseño final quedan pendientes. La identidad futura aprobada es azul marino, dorado y crema; la página temporal no cambia de paleta.

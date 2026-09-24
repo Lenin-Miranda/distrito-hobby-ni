@@ -9,8 +9,8 @@ flowchart LR
   Browser -->|HTTP cuando corresponda · CORS explícito| API
   Contracts[Contratos HTTP Zod · ESM] -.-> Web
   Contracts -.-> API
-  API -.->|Futuro| Prisma[Prisma ORM 7]
-  Prisma -.->|Futuro| DB[(PostgreSQL)]
+  API -->|Readiness SQL real| Prisma[Prisma ORM 7]
+  Prisma --> DB[(PostgreSQL · Supabase local)]
   API -.->|Futuro| Providers[Proveedores externos]
 ```
 
@@ -25,7 +25,7 @@ flowchart LR
 
 ## Límites y compilación
 
-`@distrito/contracts` exporta únicamente el esquema Zod y el tipo inferido de health. Su build produce JavaScript ESM y declaraciones en `dist`; los consumidores importan el nombre del paquete, con `workspace:*`. No se publican modelos de base de datos ni configuración del servidor.
+`@distrito/contracts` exporta los esquemas Zod y tipos HTTP de health/readiness. Su build produce JavaScript ESM y declaraciones en `dist`; los consumidores importan el nombre del paquete, con `workspace:*`. No se publican modelos de base de datos ni configuración del servidor.
 
 API y contratos usan `type: module`, `module: NodeNext` y `moduleResolution: NodeNext`. Los imports relativos del backend llevan extensión `.js` para que el JavaScript compilado resuelva en Node. Nest usa `experimentalDecorators` y `emitDecoratorMetadata`; su build con tsc conserva metadata. Vitest usa SWC con decoradores heredados y metadata explícita, según la [receta oficial de Nest](https://docs.nestjs.com/recipes/swc#vitest). La prueba de integración usa el servicio real y detecta si su constructor deja de inyectarse.
 
@@ -37,7 +37,7 @@ Next mantiene bundler/JSX, sus plugins y `noEmit` propios; ninguna de esas opcio
 
 Next presenta la interfaz y podrá hacer SSR. Cualquier proxy/BFF se limitará a transporte y sesión. **Nest será la autoridad** de precios finales, disponibilidad, permisos, operaciones de stock, validación de pagos y servicios externos. Ni el estado del navegador ni una redirección de pago serán prueba suficiente de pago. Callbacks y webhooks de proveedores terminarán en Nest.
 
-Prisma/client permanecen en 7.10.0 exclusivamente en API. Cuando se diseñe persistencia, esquema y migraciones vivirán en `apps/api/prisma/`; ese directorio y los modelos todavía no existen. No hay generación en install/build ni accesos desde Next.
+Prisma/client/adapter-pg permanecen en 7.10.0 exclusivamente en API. El esquema sin modelos vive en `apps/api/prisma/`; Turbo genera ESM antes de compilar. DatabaseModule consulta PostgreSQL local para `/api/v1/ready` (200/503); `/health` sigue independiente. Supabase gestiona infraestructura y Prisma Migrate será el único dueño de las tablas comerciales del esquema app. No hay modelos comerciales ni accesos DB desde Next. Ver [desarrollo local](local-development.md).
 
 Better Auth permanece instalado en API sin instancia, sesiones ni adaptador. Quedan por decidir cookies, dominio/orígenes, SameSite, transporte del cliente y protección CSRF. No hay JWT casero ni tokens de sesión en localStorage.
 

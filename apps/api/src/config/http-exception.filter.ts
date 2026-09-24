@@ -30,9 +30,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
       .json({
         statusCode,
         message:
-          statusCode >= 500
-            ? "Internal server error"
-            : (messages[statusCode] ?? "Request failed"),
+          statusCode === 503
+            ? "Service unavailable"
+            : statusCode >= 500
+              ? "Internal server error"
+              : (messages[statusCode] ?? "Request failed"),
       });
   }
 }
