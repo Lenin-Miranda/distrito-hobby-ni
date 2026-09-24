@@ -26,7 +26,8 @@
         "NEXT_PUBLIC_API_BASE_URL",
         "API_INTERNAL_BASE_URL",
         "DATABASE_ENABLED",
-        "DATABASE_URL"
+        "DATABASE_URL",
+        "BIND_HOST"
       ]
     },
     "lint": {
@@ -64,7 +65,8 @@
         "NEXT_PUBLIC_API_BASE_URL",
         "API_INTERNAL_BASE_URL",
         "DATABASE_ENABLED",
-        "DATABASE_URL"
+        "DATABASE_URL",
+        "BIND_HOST"
       ]
     },
     "@distrito/api#lint": {

@@ -12,6 +12,7 @@ const children = [
       "watch",
       "dev",
       `--filter=${name}`,
+      ...(name === "@distrito/web" ? ["--", "--hostname", "127.0.0.1"] : []),
     ],
     {
       cwd: root,

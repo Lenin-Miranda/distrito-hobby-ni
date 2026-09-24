@@ -18,7 +18,7 @@ No copies archivos `.env` para este flujo. `local:setup` valida destinos y puert
 crea la red, inicia el CLI fijado, comprueba todos sus contenedores, prepara roles
 locales y ejecuta `migrate deploy`. Es repetible y no borra datos. `dev:local`
 hace el mismo setup y arranca Next/Nest en host con recarga y DB habilitada.
-Ctrl+C detiene las apps, conservando Supabase.
+Ctrl+C detiene las apps, conservando Supabase. En este modo ambos servidores se enlazan a 127.0.0.1 (`BIND_HOST` de API y `--hostname` de Next). Los contenedores mantienen 0.0.0.0 internamente, con publicación loopback en Compose.
 
 El modo básico anterior sigue disponible: `pnpm dev`, `pnpm test` y builds no
 necesitan DB. `DATABASE_ENABLED` vale `false` por defecto; solo acepta strings

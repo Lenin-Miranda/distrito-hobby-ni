@@ -189,6 +189,7 @@ export function environments() {
     `postgresql://${role}:${password}@${hostname}:${port}/${database}?schema=app`;
   const host = {
     DATABASE_ENABLED: "true",
+    BIND_HOST: "127.0.0.1",
     DATABASE_URL: url(
       "distrito_runtime",
       credentials.runtime,

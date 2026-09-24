@@ -6,6 +6,7 @@ test("starts locally without database credentials", () => {
     NODE_ENV: "development",
     DATABASE_ENABLED: false,
     PORT: 4000,
+    BIND_HOST: "0.0.0.0",
     WEB_ORIGINS: ["http://localhost:3000"],
   });
 });
@@ -24,6 +25,7 @@ test("parses explicit origins and a provider port", () => {
 
 test.each([
   { PORT: "" },
+  { BIND_HOST: "external.example" },
   { PORT: "wrong" },
   { PORT: "65536" },
   { WEB_ORIGINS: "*" },
