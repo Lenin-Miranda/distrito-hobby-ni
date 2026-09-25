@@ -7,22 +7,25 @@
     "node": ">=24.11.0 <25"
   },
   "scripts": {
-    "dev": "nest start --watch",
+    "dev": "nest start --watch --config nest-cli.dev.json",
     "build": "nest build",
     "start": "node dist/main.js",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:generate": "prisma generate"
   },
   "dependencies": {
     "@distrito/contracts": "workspace:*",
     "@nestjs/common": "12.1.0",
-    "@nestjs/core": "12.1.0",
     "@nestjs/config": "12.0.1",
+    "@nestjs/core": "12.1.0",
     "@nestjs/platform-express": "12.1.0",
+    "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "better-auth": "1.7.5",
     "helmet": "8.3.0",
+    "pg": "8.23.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
     "zod": "4.6.5"
@@ -35,6 +38,7 @@
     "@swc/core": "1.16.2",
     "@types/express": "5.0.6",
     "@types/node": "24.13.6",
+    "@types/pg": "8.23.1",
     "@types/supertest": "7.2.1",
     "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
@@ -44,5 +48,8 @@
     "typescript-eslint": "8.70.1",
     "unplugin-swc": "2.0.0",
     "vitest": "5.0.1"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }

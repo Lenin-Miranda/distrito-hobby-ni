@@ -24,12 +24,70 @@
         "PORT",
         "WEB_ORIGINS",
         "NEXT_PUBLIC_API_BASE_URL",
-        "API_INTERNAL_BASE_URL"
+        "API_INTERNAL_BASE_URL",
+        "DATABASE_ENABLED",
+        "DATABASE_URL",
+        "BIND_HOST"
       ]
     },
-    "lint": { "dependsOn": ["^build"] },
-    "typecheck": { "dependsOn": ["^build"], "cache": false },
-    "test": { "dependsOn": ["^build"], "outputs": [] },
-    "test:e2e": { "cache": false }
-  }
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test:e2e": {
+      "cache": false
+    },
+    "db:generate": {
+      "inputs": ["prisma/schema.prisma", "prisma.config.ts"],
+      "outputs": ["src/generated/prisma/**"]
+    },
+    "@distrito/api#build": {
+      "dependsOn": ["^build", "db:generate"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
+    },
+    "@distrito/api#dev": {
+      "dependsOn": ["^build", "db:generate"],
+      "cache": false,
+      "persistent": true,
+      "interruptible": true,
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": [
+        "PORT",
+        "WEB_ORIGINS",
+        "NEXT_PUBLIC_API_BASE_URL",
+        "API_INTERNAL_BASE_URL",
+        "DATABASE_ENABLED",
+        "DATABASE_URL",
+        "BIND_HOST"
+      ]
+    },
+    "@distrito/api#lint": {
+      "dependsOn": ["^build", "db:generate"]
+    },
+    "@distrito/api#typecheck": {
+      "dependsOn": ["^build", "db:generate"],
+      "cache": false
+    },
+    "@distrito/api#test": {
+      "dependsOn": ["^build", "db:generate"],
+      "outputs": []
+    },
+    "@distrito/web#dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+      "interruptible": true,
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["PORT", "NEXT_PUBLIC_API_BASE_URL", "API_INTERNAL_BASE_URL"]
+    }
+  },
+  "globalPassThroughEnv": ["PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN"]
 }

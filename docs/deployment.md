@@ -1,6 +1,6 @@
 # Despliegues independientes (pendientes)
 
-Esta migración no despliega ni cambia Vercel, Render, Railway, dominios, bases de datos o configuración externa. Son instrucciones para una fase posterior.
+Esta migración no despliega ni cambia Vercel, Render, Railway, dominios, bases de datos de producción o configuración externa. Son instrucciones para una fase posterior.
 
 ## Web en Vercel
 
@@ -38,7 +38,9 @@ Para una imagen mínima, usa etapas separadas: instala devDependencies para comp
 1. Elegir hosting API, región, dominios HTTPS y URLs públicas/internas alcanzables.
 2. Configurar roots, comandos, runtime y variables por entorno, con acceso a los paquetes del workspace.
 3. Establecer orígenes CORS explícitos. Diseñar cookies, CSRF y Better Auth antes de añadir credenciales a CORS o sesiones.
-4. Diseñar persistencia antes de provisionar PostgreSQL, crear esquema, migraciones o secrets.
+4. Diseñar modelos comerciales y provisión PostgreSQL de producción. La infraestructura local ya existe, con esquema app vacío y roles aislados; no reutilizar sus contraseñas ni el CLI local en producción.
 5. Revisar políticas operativas y la visibilidad del repositorio. GitHub lo reportó **público** durante esta migración; no se modificó. `private: true` en cada package.json impide publicación npm, no controla acceso a GitHub.
 
 No hay pasarela elegida ni Stripe instalado. BAC es solo una opción futura por evaluar. No se integra Cloudinary, email, pagos ni WhatsApp Cloud API en esta fase.
+
+Los Dockerfiles implementados se documentan en [Docker local](docker.md). Web standalone arranca con `node .next/standalone/apps/web/server.js` después de build, incluyendo assets preparados. API genera Prisma durante build, no al arrancar. Configurar DATABASE_ENABLED explícitamente en producción futura; `/api/v1/ready` requiere DB real.

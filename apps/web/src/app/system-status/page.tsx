@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import { getInternalApiBaseUrl } from "@/config/server";
 import { fetchHealth } from "@/lib/api/health";
+import { fetchReady } from "@/lib/api/ready";
 
 export const metadata: Metadata = {
   title: "System status | Distrito Hobby",
@@ -11,9 +12,11 @@ export const metadata: Metadata = {
 export default async function SystemStatusPage() {
   await connection();
   let available = false;
+  let databaseReady = false;
   try {
     await fetchHealth(getInternalApiBaseUrl());
     available = true;
+    databaseReady = await fetchReady(getInternalApiBaseUrl());
   } catch {
     // Transport and configuration details stay on the server.
   }
@@ -26,6 +29,11 @@ export default async function SystemStatusPage() {
           {available
             ? "API available"
             : "API unavailable. Please try again later."}
+        </p>
+        <p className="mt-3 text-muted-foreground">
+          {databaseReady
+            ? "Database ready"
+            : "Database unavailable or disabled"}
         </p>
       </div>
     </main>

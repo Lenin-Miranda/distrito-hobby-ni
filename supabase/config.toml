@@ -1,0 +1,47 @@
+# Local infrastructure only. Application schema/migrations belong to Prisma.
+project_id = "distrito-hobby-ni"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+health_timeout = "2m"
+
+[db.pooler]
+enabled = false
+
+[db.migrations]
+enabled = false
+schema_paths = []
+
+[db.seed]
+enabled = false
+sql_paths = []
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1"
+
+# Kept for Studio's local stack; not integrated with the application.
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+
+[realtime]
+enabled = false
+[storage]
+enabled = false
+[local_smtp]
+enabled = false
+[edge_runtime]
+enabled = false
+[analytics]
+enabled = false

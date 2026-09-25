@@ -28,6 +28,7 @@ export default defineConfig({
       env: {
         NODE_ENV: "production",
         PORT: "4100",
+        DATABASE_ENABLED: "false",
         WEB_ORIGINS: "http://127.0.0.1:3100",
       },
       reuseExistingServer: false,
@@ -35,11 +36,12 @@ export default defineConfig({
     },
     {
       name: "web",
-      command:
-        "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3100",
+      command: "node .next/standalone/apps/web/server.js",
       url: "http://127.0.0.1:3100",
       env: {
         NODE_ENV: "production",
+        PORT: "3100",
+        HOSTNAME: "127.0.0.1",
         API_INTERNAL_BASE_URL: "http://127.0.0.1:4100/api/v1",
         NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:4100/api/v1",
       },
@@ -48,12 +50,13 @@ export default defineConfig({
     },
     {
       name: "web-without-api",
-      command:
-        "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3101",
+      command: "node .next/standalone/apps/web/server.js",
       url: "http://127.0.0.1:3101",
       // Same compiled web; only its runtime internal endpoint is unavailable.
       env: {
         NODE_ENV: "production",
+        PORT: "3101",
+        HOSTNAME: "127.0.0.1",
         API_INTERNAL_BASE_URL: "http://127.0.0.1:4199/api/v1",
         NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:4100/api/v1",
       },

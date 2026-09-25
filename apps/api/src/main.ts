@@ -18,7 +18,10 @@ async function bootstrap(): Promise<void> {
   app.useLogger(logger);
   await configureApp(app);
   const config = app.get(ConfigService<Environment, true>);
-  await app.listen(config.get("PORT", { infer: true }), "0.0.0.0");
+  await app.listen(
+    config.get("PORT", { infer: true }),
+    config.get("BIND_HOST", { infer: true }),
+  );
   logger.log("API ready");
 }
 
