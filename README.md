@@ -9,6 +9,8 @@ Base de desarrollo para una futura tienda de Nicaragua. El mismo repositorio con
 Requisitos: Git, **Node >=24.11.0 <25** y **pnpm 12.6.0**. Se conservan `.nvmrc`, `.node-version`, `engineStrict` y el lockfile único.
 
 ```sh
+git clone https://github.com/Lenin-Miranda/distrito-hobby-ni.git
+cd distrito-hobby-ni
 nvm install
 nvm use
 npm install --global pnpm@12.6.0
@@ -23,6 +25,18 @@ Los ejemplos contienen únicamente URLs locales y placeholders vacíos. Los valo
 - Web: <http://localhost:3000>
 - Diagnóstico técnico: <http://localhost:3000/system-status>
 - Liveness API: <http://localhost:4000/api/v1/health>
+
+## Elegir el modo de desarrollo
+
+| Necesidad                         | Comando                                      | Base de datos               |
+| --------------------------------- | -------------------------------------------- | --------------------------- |
+| Revisar la página y liveness      | `pnpm dev`                                   | No necesaria                |
+| Trabajar con PostgreSQL local     | `pnpm local:setup`, después `pnpm dev:local` | Supabase en Docker          |
+| Ejecutar las apps en contenedores | `pnpm docker:up` después del setup           | Misma infraestructura local |
+
+Usa un solo modo de aplicaciones a la vez para evitar conflictos de puertos.
+La respuesta de liveness no demuestra conectividad con PostgreSQL: el estado de
+readiness corresponde a `/api/v1/ready` y al diagnóstico de sistema.
 
 ## Supabase y Docker local
 
