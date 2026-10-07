@@ -19,7 +19,8 @@ ambos contenedores y comprueba con casos negativos los límites del monorepo.
 - CI también se ejecuta al hacer push a `staging`. Mantiene `contents: read`,
   acciones fijadas por SHA, `--frozen-lockfile`, pruebas de producción reales,
   limpieza de procesos y reportes de fallos con retención de siete días.
-- La API de Playwright escucha explícitamente en `127.0.0.1`.
+- La API de Playwright y el servidor de integración Supertest escuchan
+  explícitamente en `127.0.0.1`; Nest cierra este último al terminar la suite.
 
 La causa y la configuración Docker se explican en [Docker](../docker.md).
 Los comandos habituales se documentan en [desarrollo](../development.md).

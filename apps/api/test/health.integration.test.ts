@@ -1,5 +1,6 @@
 import { Controller, Get, Logger, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
+import { once } from "node:events";
 import type { Server } from "node:http";
 import request from "supertest";
 import { afterAll, beforeAll, expect, test, vi } from "vitest";
@@ -28,6 +29,10 @@ beforeAll(async () => {
   app.useLogger(false);
   await configureApp(app);
   server = app.getHttpServer() as Server;
+  // Own the listener so Supertest does not call listen(0) on all interfaces.
+  const listening = once(server, "listening");
+  server.listen(0, "127.0.0.1");
+  await listening;
 });
 
 afterAll(async () => {
