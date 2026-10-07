@@ -89,5 +89,8 @@
       "env": ["PORT", "NEXT_PUBLIC_API_BASE_URL", "API_INTERNAL_BASE_URL"]
     }
   },
-  "globalPassThroughEnv": ["PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN"]
+  "globalPassThroughEnv": [
+    "PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN",
+    "PNPM_CONFIG_STORE_DIR"
+  ]
 }

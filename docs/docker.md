@@ -64,7 +64,7 @@ pnpm docker:dev
 pnpm docker:down
 ```
 
-La extensión compose.dev usa las etapas development y `turbo watch`. Desactiva únicamente la reinstalación implícita de pnpm al ejecutar scripts (`PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false`): sus dependencias ya fueron instaladas con frozen-lockfile al construir la imagen. La política de scripts de instalación permanece intacta. Monta solo
+La extensión compose.dev usa las etapas development y `turbo watch`. Desactiva únicamente la reinstalación implícita de pnpm al ejecutar scripts (`PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false`): sus dependencias ya fueron instaladas con frozen-lockfile al construir la imagen. Fija además `PNPM_CONFIG_STORE_DIR=/pnpm/store`, el mismo store utilizado durante la instalación. Turbo transmite ambas opciones a sus tareas hijas. La política de scripts de instalación permanece intacta. Monta solo
 las fuentes necesarias y el esquema Prisma; no monta todo el repositorio ni
 node_modules host. Las dependencias tienen volúmenes de solo lectura separados por
 servicio, con nombres derivados del hash del lockfile/política pnpm/imagen Node;
@@ -73,6 +73,17 @@ volúmenes propios. Al cambiar manifests, lockfile o configuración que no está
 montada, repite `docker:dev` para reconstruir/recrear. Nunca ejecutes ambos modos
 en los mismos puertos. El contenedor de desarrollo tiene filesystem escribible
 para compilación; la restricción de solo lectura corresponde a runtime.
+
+Sin un store explícito, pnpm 12.6.0 crea y elimina entradas `_tmp_*` en el
+workspace para detectar el volumen de hardlinks. El watcher recursivo de Turbo
+puede observar una entrada después de que desaparezca y abortar con ENOENT.
+Desactivar la reinstalación implícita no evita esa detección. Fijar el store
+elimina su origen sin ignorar cambios de fuentes ni aumentar reintentos.
+El smoke ejecuta `pnpm-store-probe.mjs` en ambos contenedores: observa el
+workspace durante un build real forzado a través de Turbo, exige cero entradas
+temporales de pnpm y luego verifica recarga de fuentes y de contratos.
+La implementación del detector está en el
+[código oficial de pnpm 12.6.0](https://github.com/pnpm/pnpm/blob/v12.6.0/pnpm/crates/config/src/store_path.rs).
 
 `docker:down` conserva los volúmenes y la red externa. `supabase:stop` detiene
 solo el proyecto del perfil elegido, conservando DB. Ninguno ejecuta reset o

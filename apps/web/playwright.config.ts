@@ -28,6 +28,7 @@ export default defineConfig({
       env: {
         NODE_ENV: "production",
         PORT: "4100",
+        BIND_HOST: "127.0.0.1",
         DATABASE_ENABLED: "false",
         WEB_ORIGINS: "http://127.0.0.1:3100",
       },

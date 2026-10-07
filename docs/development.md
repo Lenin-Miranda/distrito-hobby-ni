@@ -45,6 +45,7 @@ Ejecuta desde la raíz, secuencialmente:
 ```sh
 pnpm format:check
 pnpm lint
+pnpm test:boundaries
 pnpm typecheck
 pnpm test
 pnpm build
@@ -53,6 +54,7 @@ pnpm test:e2e
 ```
 
 - Contratos: acepta la respuesta válida, rechaza variantes incompatibles y no propaga campos extra.
+- Límites: `test:boundaries` ejecuta el verificador real sobre fixtures aislados. Un caso permitido debe pasar y diez casos prohibidos deben terminar con código 1: Prisma/auth/API desde web, escapes relativos, apps/Node/entorno desde contratos, imports calculados y dependencias runtime prohibidas. Los fixtures se eliminan al terminar.
 - Web: conserva React Testing Library/jsdom y prueba validación HTTP, errores y timeout del cliente fetch. Esas pruebas unitarias no sustituyen E2E.
 - API: Vitest Node con SWC; valida entorno, metadata/DI, health, Helmet, CORS permitido/rechazado, preflight y errores sin datos privados. Supertest inicia la aplicación Nest real, sin mock de HealthService.
 - Playwright: `scripts/e2e.mjs` ejecuta una fase de build con URLs de prueba coherentes antes de levantar procesos. API usa 4100; web 3100; una segunda web 3101 apunta internamente a 4199, que debe estar libre, para verificar indisponibilidad sin interferir con las pruebas paralelas.

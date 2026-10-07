@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, "chore/**"]
+    branches: [main, staging, "chore/**"]
 
 permissions:
   contents: read
@@ -26,6 +26,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
       - run: pnpm lint
+      - run: pnpm test:boundaries
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm test:local

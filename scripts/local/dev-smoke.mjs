@@ -40,6 +40,12 @@ export async function devSmoke() {
       ],
       { dev: true, visible: true },
     );
+    for (const service of ["api", "web"]) {
+      await compose(
+        ["exec", "-T", service, "node", "scripts/local/pnpm-store-probe.mjs"],
+        { dev: true, visible: true },
+      );
+    }
     const marker = `reload_${Date.now()}`;
     changed[0] =
       original[0] + `\nexport const developmentReloadProbe = "${marker}";\n`;

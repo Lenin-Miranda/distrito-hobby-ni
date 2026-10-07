@@ -18,6 +18,7 @@
     "lint": "node scripts/check-boundaries.mjs && turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "test:boundaries": "node --test scripts/check-boundaries.test.mjs",
     "test:e2e": "node scripts/e2e.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

@@ -17,6 +17,7 @@ RUN pnpm --filter @distrito/api db:generate && pnpm --filter @distrito/contracts
 
 FROM dependencies AS development
 ENV PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false
+ENV PNPM_CONFIG_STORE_DIR=/pnpm/store
 RUN mkdir -p .turbo apps/api/.turbo apps/api/.next apps/api/dist && chown node:node /workspace apps/web apps/api packages/contracts && chown -R node:node .turbo apps/api/.turbo apps/api/.next apps/api/dist packages/contracts/dist apps/api/src/generated
 USER node
 CMD ["pnpm", "exec", "turbo", "watch", "dev", "--filter=@distrito/api"]
